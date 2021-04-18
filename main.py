@@ -21,6 +21,22 @@ def counter():
     app.counter += 1
     return str(app.counter)
 
+@app.get('/method', status_code = 200)
+def method():
+    return {"method": "GET"}
+
 @app.post('/method', status_code = 201)
 def method():
     return {"method": "POST"}
+
+@app.delete('/method', status_code = 200)
+def method():
+    return {"method": "DELETE"}
+
+@app.put('/method', status_code = 200)
+def method():
+    return {"method": "PUT"}
+
+@app.options('/method', status_code = 200)
+def method():
+    return {"method": "OPTIONS"}
