@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 import pytest
-from main import app
+from main_1 import app
 
 client = TestClient(app)
 
@@ -45,3 +45,4 @@ def test_method():
     response = client.options(f"/method")
     assert response.status_code == 200 
     assert response.json() == {"method": "OPTIONS"}
+     
