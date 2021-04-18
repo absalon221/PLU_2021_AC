@@ -7,7 +7,7 @@ class Patient_input(BaseModel):
     surname: str
 
 class Patient_processed(BaseModel):
-    id: str
+    id: int
     name: str
     surname: str
     register_date: str
@@ -29,4 +29,4 @@ def register(patient: Patient_input):
     reg_date = datetime.date.today()
     vacc_date = reg_date + datetime.timedelta(days = (len(patient.name) + len(patient.surname)))
    
-    return Patient_processed(id=str(app.counter), name=patient.name.capitalize(), surname=patient.surname.capitalize(), register_date=str(reg_date),  vaccination_date=str(vacc_date))
+    return Patient_processed(id=int(app.counter), name=patient.name.capitalize(), surname=patient.surname.capitalize(), register_date=str(reg_date),  vaccination_date=str(vacc_date))
