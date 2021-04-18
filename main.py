@@ -27,6 +27,6 @@ def auth(password:str, password_hash:str, response:Response):
 def register(patient: Patient_input):
     app.counter += 1
     reg_date = datetime.date.today()
-    vacc_date = reg_date + datetime.timedelta(days = (len(patient.name) + len(patient.surname)))
+    vacc_date = reg_date + datetime.timedelta(days = (sum(map(str.isalpha, name)) + sum(map(str.isalpha, surname))))
    
-    return Patient_processed(id=int(app.counter), name=patient.name.capitalize(), surname=patient.surname.capitalize(), register_date=str(reg_date),  vaccination_date=str(vacc_date))
+    return Patient_processed(id=int(app.counter), name=patient.name.title(), surname=patient.surname.title(), register_date=str(reg_date),  vaccination_date=str(vacc_date))
