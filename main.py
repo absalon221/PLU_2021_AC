@@ -2,6 +2,17 @@ from fastapi import FastAPI, Response, status
 from pydantic import BaseModel
 import hashlib, datetime
 
+class Patient_input(BaseModel):
+    name: str
+    surname: str
+
+class Patient_processed(BaseModel):
+    id: str
+    name: str
+    surname: str
+    register_date: str
+    vaccination_date: str
+
 app = FastAPI()
 app.counter = 0
     
@@ -12,10 +23,10 @@ def auth(password:str, password_hash:str, response:Response):
         if password_hash == calculated_hash:
             response.status_code = 204
             
-@app.post('/register', status_code = 201)
-def register(name:str, surname:str):
+@app.post('/register', status_code = 201, response_model=Patient_processed)
+def register(patient: Patient_input):
     app.counter += 1
-    register_date = datetime.date.today()
-    vaccination_date = register_date + datetime.timedelta(days = (len(name) + len(surname)))
+    reg_date = datetime.date.today()
+    vacc_date = reg_date + datetime.timedelta(days = (len(patient.name) + len(patient.surname)))
    
-    return {"id": str(app.counter),"name": name,"surname": surname, "register_date": str(register_date),  "vaccination_date":str(vaccination_date)}
+    return Patient_processed(id=str(app.counter), name=patient.name.capitalize(), surname=patient.surname.capitalize(), register_date=str(reg_date),  vaccination_date=str(vacc_date))

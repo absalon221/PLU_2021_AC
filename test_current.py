@@ -10,10 +10,10 @@ def test_auth():
     
 def test_register():
     #1
-    response = client.post(f"/register?name=Jan&surname=Nowak")
+    response = client.post(f"/register", json={"name": "Jan", "surname": "Nowak"})
     assert response.status_code == 201
     assert response.json() == {"id": "1","name": "Jan","surname": "Nowak", "register_date": "2021-04-18",  "vaccination_date": "2021-04-26"}
     #2
-    response = client.post(f"/register?name=Blob&surname=Blaab")
+    response = client.post(f"/register", json={"name": "Blob", "surname": "Blaab"})
     assert response.status_code == 201
     assert response.json() == {"id": "2","name": "Blob","surname": "Blaab", "register_date": "2021-04-18",  "vaccination_date": "2021-04-27"}    
