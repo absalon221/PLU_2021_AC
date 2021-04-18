@@ -9,7 +9,7 @@ class HelloResp(BaseModel):
 
 @app.get("/")
 def root():
-    return {"message": "Hello world"}
+    return {"message": "Hello world!"}
 
 @app.get("/hello/{name}", response_model=HelloResp)
 def hello_name_view(name: str):
