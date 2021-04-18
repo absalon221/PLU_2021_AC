@@ -1,4 +1,6 @@
 _.pytest_cache/
-_pycache_/
+__pycache__/
 PLU_venv/
 .vscode/
+__pycache__/test_1.cpython-39-pytest-6.2.3.pyc
+__pycache__/test_1.cpython-39-pytest-6.2.3.pyc
