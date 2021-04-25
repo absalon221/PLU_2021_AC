@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 import pytest, hashlib, requests
-from main import app
+from main_2 import app
 
 client = TestClient(app)
 
