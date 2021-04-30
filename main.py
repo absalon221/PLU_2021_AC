@@ -33,8 +33,8 @@ def login_session(response: Response, credentials: HTTPBasicCredentials = Depend
     response.set_cookie(key="session_token", value=session_token)
     app.stored_login_session.append(session_token)
     
-    if len(app.stored_login_session) > 5:
-        app.stored_login_session.pop(0)
+    #if len(app.stored_login_session) > 5:
+    #    app.stored_login_session.pop(0)
         
 
 @app.post("/login_token", status_code = 201)
@@ -49,8 +49,8 @@ def login_token(response: Response, credentials: HTTPBasicCredentials = Depends(
     response.set_cookie(key="value_token", value=session_token)
     app.stored_login_token.append(session_token)
     
-    if len(app.stored_login_token) > 5:
-        app.stored_login_token.pop(0)
+    #if len(app.stored_login_token) > 5:
+    #    app.stored_login_token.pop(0)
     
     return {"token": session_token}
 
@@ -92,7 +92,7 @@ def logout_session(response: Response, session_token: str = Cookie(None), format
     if (session_token not in app.stored_login_session) or (session_token == ""):
         raise HTTPException(status_code=401, detail="Unathorised")
     
-    app.stored_login_session.pop(app.stored_login_session.index(session_token))
+    app.stored_login_session.remove(session_token)
     return RedirectResponse(url=f"/logged_out?format={format}")
     
     
@@ -101,5 +101,5 @@ def logout_token(response: Response, token: str, format: str = ""):
     if (token not in app.stored_login_token) or (token == ""):
         raise HTTPException(status_code=401, detail="Unathorised")
     
-    app.stored_login_token.pop(app.stored_login_token.index(token))
+    app.stored_login_token.remove(token)
     return RedirectResponse(url=f"/logged_out?format={format}")
