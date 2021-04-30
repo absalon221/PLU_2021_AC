@@ -54,7 +54,7 @@ def login_token(response: Response, credentials: HTTPBasicCredentials = Depends(
     return {"token": session_token}
 
 @app.get("/welcome_session", status_code=200)
-def welcome_session(response: Response, session_token: str = Cookie(None), format = None):
+def welcome_session(response: Response, session_token: str = Cookie(None), format: str = ""):
     if session_token not in app.stored_login_sessions:
         raise HTTPException(status_code=401)
     
@@ -69,7 +69,7 @@ def welcome_session(response: Response, session_token: str = Cookie(None), forma
         return "Welcome!"
         
 @app.get("/welcome_token", status_code=200)
-def welcome_token(response: Response, token: str, format = None):
+def welcome_token(response: Response, token: str, format: str = ""):
     if token not in app.stored_login_token:
         raise HTTPException(status_code=401)
     
