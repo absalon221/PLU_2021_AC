@@ -9,5 +9,5 @@ def test_login_session():
     password = "NotSoSecurePa$$"
     response = client.post(f"/login_session?login={login}&password={password}")
     
-    assert response.status_code == 401
+    assert response == "OK"
     
