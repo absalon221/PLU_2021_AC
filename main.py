@@ -56,8 +56,8 @@ def login_token(response: Response, credentials: HTTPBasicCredentials = Depends(
 
 @app.get("/welcome_session", status_code=200)
 def welcome_session(response: Response, session_token: str = Cookie(None), format: str = ""):
-    if session_token not in app.stored_login_session:
-        raise HTTPException(status_code=401)
+    if (session_token not in app.stored_login_session) or (session_token == ""):
+        raise HTTPException(status_code=401, detail="Unathorised")
     
     if format == 'json':
         return {"message": "Welcome!"}
@@ -68,8 +68,8 @@ def welcome_session(response: Response, session_token: str = Cookie(None), forma
         
 @app.get("/welcome_token", status_code=200)
 def welcome_token(response: Response, token: str, format: str = ""):
-    if token not in app.stored_login_token:
-        raise HTTPException(status_code=401)
+    if (token not in app.stored_login_token) or (token == ""):
+        raise HTTPException(status_code=401, detail="Unathorised")
     
     if format == 'json':
         return {"message": "Welcome!"}
