@@ -21,7 +21,7 @@ def print_date(request: Request, response: Response):
     response.headers["content-type"] = "text/html"
     return templates.TemplateResponse("hello.html", {"request": request, "date": return_date})
 
-@app.post("/login_session")
+@app.post("/login_session", status_code = 201)
 def login_session(response: Response, credentials: HTTPBasicCredentials = Depends(security)):
     correct_username = secrets.compare_digest(credentials.username, "4dm1n")
     correct_password = secrets.compare_digest(credentials.password, "NotSoSecurePa$$")
@@ -29,10 +29,9 @@ def login_session(response: Response, credentials: HTTPBasicCredentials = Depend
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     #app.access_tokens[0]=1
     response.set_cookie(key="session_token", value=1)
-    return
         
 
-@app.post("/login_token")
+@app.post("/login_token", status_code = 201, response_model=TokenResp)
 def login_token(response: Response, credentials: HTTPBasicCredentials = Depends(security)):
     correct_username = secrets.compare_digest(credentials.username, "4dm1n")
     correct_password = secrets.compare_digest(credentials.password, "NotSoSecurePa$$")
