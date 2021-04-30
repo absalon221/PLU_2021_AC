@@ -8,4 +8,4 @@ templates = Jinja2Templates(directory="templates")
 @app.get("/hello")
 def print_date(request: Request):
     return_date = date.today()
-    return templates.TemplateResponse("hello.html", {"date": return_date})
+    return templates.TemplateResponse("hello.html", {"request": request, "date": return_date})
