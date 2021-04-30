@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request, Response, Cookie, Depends, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from fastapi.responses import HTMLResponse, PlainTextResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse
 from datetime import date
 from pydantic import BaseModel
 from hashlib import sha256
@@ -77,3 +77,29 @@ def welcome_token(response: Response, token: str, format: str = ""):
         return HTMLResponse(content="<h1>Welcome!</h1>")
     else:
         return PlainTextResponse(content="Welcome!")
+
+@app.get("/logged_out", status_code=200)
+def logged_out(response: Response, format: str = ""):
+    if format == 'json':
+        return {"message": "Logged out!"}
+    elif format == 'html':
+        return HTMLResponse(content="<h1>Logged out!</h1>")
+    else:
+        return PlainTextResponse(content="Logged out!")
+    
+@app.delete("/logout_session", status_code=302)
+def logout_session(response: Response, session_token: str = Cookie(None), format: str = ""):
+    if (session_token not in app.stored_login_session) or (session_token == ""):
+        raise HTTPException(status_code=401, detail="Unathorised")
+    
+    app.stored_login_session.pop(app.stored_login_session.index(session_token))
+    return RedirectResponse(url=f"/logged_out?format={format}")
+    
+    
+@app.delete("/logout_token", status_code=302)
+def logout_token(response: Response, token: str, format: str = ""):
+    if (token not in app.stored_login_token) or (token == ""):
+        raise HTTPException(status_code=401, detail="Unathorised")
+    
+    app.stored_login_token.pop(app.stored_login_token.index(token))
+    return RedirectResponse(url=f"/logged_out?format={format}")
