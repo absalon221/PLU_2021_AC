@@ -87,15 +87,6 @@ def welcome_token(response: Response, token: str, format: str = ""):
 
 # zad. 3.4
 
-@app.get("/logged_out", status_code=200)
-def logged_out(response: Response, format: str = ""):
-    if format == 'json':
-        return {"message": "Logged out!"}
-    elif format == 'html':
-        return HTMLResponse(content="<h1>Logged out!</h1>")
-    else:
-        return PlainTextResponse(content="Logged out!")
-
 @app.get("/logout_session")    
 @app.delete("/logout_session")
 def logout_session(session_token: str = Cookie(None), format: str = ""):
@@ -113,3 +104,12 @@ def logout_token(token: str = "", format: str = ""):
     
     app.stored_login_token.remove(token)
     return RedirectResponse(url=f"/logged_out?format={format}", status_code=302)
+
+@app.get("/logged_out", status_code=200)
+def logged_out(response: Response, format: str = ""):
+    if format == 'json':
+        return {"message": "Logged out!"}
+    elif format == 'html':
+        return HTMLResponse(content="<h1>Logged out!</h1>")
+    else:
+        return PlainTextResponse(content="Logged out!")
