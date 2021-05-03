@@ -21,6 +21,7 @@ def print_date(request: Request, response: Response):
     #response.headers["content-type"] = "text/html"
     return templates.TemplateResponse("hello.html", {"request": request, "date": return_date})
 
+@app.get("/login_session", status_code = 201)
 @app.post("/login_session", status_code = 201)
 def login_session(response: Response, credentials: HTTPBasicCredentials = Depends(security)):
     correct_username = secrets.compare_digest(credentials.username, "4dm1n")
@@ -36,7 +37,7 @@ def login_session(response: Response, credentials: HTTPBasicCredentials = Depend
     #if len(app.stored_login_session) > 5:
     #    app.stored_login_session.pop(0)
         
-
+@app.get("/login_token", status_code = 201)
 @app.post("/login_token", status_code = 201)
 def login_token(response: Response, credentials: HTTPBasicCredentials = Depends(security)):
     correct_username = secrets.compare_digest(credentials.username, "4dm1n")
@@ -86,18 +87,19 @@ def logged_out(response: Response, format: str = ""):
         return HTMLResponse(content="<h1>Logged out!</h1>")
     else:
         return PlainTextResponse(content="Logged out!")
-    
+
+@app.get("/logout_session", status_code=302)    
 @app.delete("/logout_session", status_code=302)
-def logout_session(response: Response, session_token: str = Cookie(None), format: str = ""):
+def logout_session(response: Response, format: str, session_token: str = Cookie(None)):
     if (session_token not in app.stored_login_session) or (session_token == ""):
         raise HTTPException(status_code=401, detail="Unathorised")
     
     app.stored_login_session.remove(session_token)
     return RedirectResponse(url=f"/logged_out?format={format}")
     
-    
+@app.get("/logout_token", status_code=302)    
 @app.delete("/logout_token", status_code=302)
-def logout_token(response: Response, token: str, format: str = ""):
+def logout_token(response: Response, token: str, format: str):
     if (token not in app.stored_login_token) or (token == ""):
         raise HTTPException(status_code=401, detail="Unathorised")
     
