@@ -90,7 +90,7 @@ def welcome_token(response: Response, token: str, format: str = ""):
 #@app.get("/logout_session")    
 @app.delete("/logout_session")
 def logout_session(session_token: str = Cookie(None), format: str = ""):
-    if (session_token != app.stored_login_session) or (session_token != app.stored_login_token):
+    if (session_token != app.stored_login_session) and (session_token != app.stored_login_token):
         raise HTTPException(status_code=401, detail="Unathorised")
     
     app.stored_login_session = ""
