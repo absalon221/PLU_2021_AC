@@ -90,7 +90,7 @@ def welcome_token(response: Response, token: str, format: str = ""):
 #@app.get("/logout_session")    
 @app.delete("/logout_session")
 def logout_session(session_token: str = Cookie(None), format: str = ""):
-    if (session_token != app.stored_login_session) or (session_token == ""):
+    if (session_token != app.stored_login_session) or (session_token != app.stored_session_token):
         raise HTTPException(status_code=401, detail="Unathorised")
     
     app.stored_login_session = ""
@@ -99,7 +99,7 @@ def logout_session(session_token: str = Cookie(None), format: str = ""):
 #@app.get("/logout_token")    
 @app.delete("/logout_token")
 def logout_token(token: str = "", format: str = ""):
-    if (token != app.stored_login_token) or (token == ""):
+    if ((token != app.stored_login_token) and (token != app.stored_login_session)) or (token == ""):
         raise HTTPException(status_code=401, detail="Unathorised")
     
     app.stored_login_token = ""
@@ -110,6 +110,6 @@ def logged_out(format: str = ""):
     if format == 'json':
         return {"message": "Logged out!"}
     elif format == 'html':
-        return HTMLResponse(content="<h1>Logged out!</h1>")
+        return HTMLResponse(content="<h1>Logged out!</h1>", status_code = 200)
     else:
-        return PlainTextResponse(content="Logged out!")
+        return PlainTextResponse(content="Logged out!", status_code = 200)
