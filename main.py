@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, Response, Cookie, Depends, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse
-from datetime import date
+import datetime
 from pydantic import BaseModel
 from hashlib import sha256
 import secrets
@@ -36,7 +36,7 @@ def login_session(response: Response, credentials: HTTPBasicCredentials = Depend
     if not (correct_username and correct_password):
         raise HTTPException(status_code=401)
     
-    session_token = sha256(f"{credentials.username}{credentials.password}{str(randint(0, 12345))}".encode()).hexdigest()
+    session_token = sha256(f"{credentials.username}{credentials.password}{str(random.randint(0, 12345))}".encode()).hexdigest()
     response.set_cookie(key="session_token", value=session_token)
     app.stored_login_session.append(session_token) # dodawanie session token
     
@@ -52,7 +52,7 @@ def login_token(response: Response, credentials: HTTPBasicCredentials = Depends(
     if not (correct_username and correct_password):
         raise HTTPException(status_code=401)
     
-    session_token = sha256(f"{credentials.username}{credentials.password}{str(randint(0, 12345))}".encode()).hexdigest()
+    session_token = sha256(f"{credentials.username}{credentials.password}{str(random.randint(0, 12345))}".encode()).hexdigest()
     response.set_cookie(key="value_token", value=session_token)
     app.stored_login_token.append(session_token) # dodawanie login token
     
