@@ -6,14 +6,16 @@ from datetime import date
 from pydantic import BaseModel
 from hashlib import sha256
 import secrets
+import random
 
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 security = HTTPBasic()
+random.seed(datetime.datetime.now())
 
-app.stored_login_session = ""
-app.stored_login_token = ""
+app.stored_login_session = []
+app.stored_login_token = []
 
 # zad. 3.1
     
@@ -34,12 +36,12 @@ def login_session(response: Response, credentials: HTTPBasicCredentials = Depend
     if not (correct_username and correct_password):
         raise HTTPException(status_code=401)
     
-    session_token = sha256(f"{credentials.username}{credentials.password}".encode()).hexdigest()
+    session_token = sha256(f"{credentials.username}{credentials.password}{str(randint(0, 12345))}".encode()).hexdigest()
     response.set_cookie(key="session_token", value=session_token)
-    app.stored_login_session = session_token # dodawanie session token
+    app.stored_login_session.append(session_token) # dodawanie session token
     
-    #if len(app.stored_login_session) > 5:
-    #    app.stored_login_session.pop(0)
+    if len(app.stored_login_session) > 3:
+        app.stored_login_session.pop(0)
         
 @app.get("/login_token", status_code = 201)
 @app.post("/login_token", status_code = 201)
@@ -50,12 +52,12 @@ def login_token(response: Response, credentials: HTTPBasicCredentials = Depends(
     if not (correct_username and correct_password):
         raise HTTPException(status_code=401)
     
-    session_token = sha256(f"{credentials.username}{credentials.password}".encode()).hexdigest()
+    session_token = sha256(f"{credentials.username}{credentials.password}{str(randint(0, 12345))}".encode()).hexdigest()
     response.set_cookie(key="value_token", value=session_token)
-    app.stored_login_token = session_token # dodawanie login token
+    app.stored_login_token.append(session_token) # dodawanie login token
     
-    #if len(app.stored_login_token) > 5:
-    #    app.stored_login_token.pop(0)
+    if len(app.stored_login_token) > 3:
+        app.stored_login_token.pop(0)
     
     return {"token": session_token}
 
@@ -63,7 +65,7 @@ def login_token(response: Response, credentials: HTTPBasicCredentials = Depends(
 
 @app.get("/welcome_session", status_code=200)
 def welcome_session(response: Response, session_token: str = Cookie(None), format: str = ""):
-    if (session_token != app.stored_login_session) or (session_token == ""):
+    if (session_token not in app.stored_login_session) or (session_token == ""):
         raise HTTPException(status_code=401, detail="Unathorised")
     
     if format == 'json':
@@ -75,7 +77,7 @@ def welcome_session(response: Response, session_token: str = Cookie(None), forma
         
 @app.get("/welcome_token", status_code=200)
 def welcome_token(response: Response, token: str, format: str = ""):
-    if (token != app.stored_login_token) or (token == ""):
+    if (token not in app.stored_login_token) or (token == ""):
         raise HTTPException(status_code=401, detail="Unathorised")
     
     if format == 'json':
@@ -87,19 +89,19 @@ def welcome_token(response: Response, token: str, format: str = ""):
 
 # zad. 3.4
 
-#@app.get("/logout_session")    
+@app.get("/logout_session")    
 @app.delete("/logout_session")
 def logout_session(session_token: str = Cookie(None), format: str = ""):
-    if (session_token != app.stored_login_session) and (session_token != app.stored_login_token):
+    if (session_token not in app.stored_login_session) and (session_token not in app.stored_login_token):
         raise HTTPException(status_code=401, detail="Unathorised")
     
     app.stored_login_session = ""
     return RedirectResponse(url=f"/logged_out?format={format}", status_code=302)
-    
-#@app.get("/logout_token")    
+
+@app.get("/logout_token")    
 @app.delete("/logout_token")
 def logout_token(token: str = "", format: str = ""):
-    if ((token != app.stored_login_token) and (token != app.stored_login_session)) or (token == ""):
+    if ((token not in app.stored_login_token) and (token not in app.stored_login_session)) or (token == ""):
         raise HTTPException(status_code=401, detail="Unathorised")
     
     app.stored_login_token = ""
