@@ -96,20 +96,20 @@ def logged_out(response: Response, format: str = ""):
     else:
         return PlainTextResponse(content="Logged out!")
 
-@app.get("/logout_session", status_code=302)    
-@app.delete("/logout_session", status_code=302)
+@app.get("/logout_session")    
+@app.delete("/logout_session")
 def logout_session(session_token: str = Cookie(None), format: str = ""):
     if (session_token not in app.stored_login_session) or (session_token == ""):
         raise HTTPException(status_code=401, detail="Unathorised")
     
     app.stored_login_session.remove(session_token)
-    return RedirectResponse(url=f"/logged_out?format={format}")
+    return RedirectResponse(url=f"/logged_out?format={format}", status_code=302)
     
-@app.get("/logout_token", status_code=302)    
-@app.delete("/logout_token", status_code=302)
+@app.get("/logout_token")    
+@app.delete("/logout_token")
 def logout_token(token: str = "", format: str = ""):
     if (token not in app.stored_login_token) or (token == ""):
         raise HTTPException(status_code=401, detail="Unathorised")
     
     app.stored_login_token.remove(token)
-    return RedirectResponse(url=f"/logged_out?format={format}")
+    return RedirectResponse(url=f"/logged_out?format={format}", status_code=302)
