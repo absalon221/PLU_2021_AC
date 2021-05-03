@@ -14,12 +14,16 @@ security = HTTPBasic()
 
 app.stored_login_session = []
 app.stored_login_token = []
+
+# zad. 3.1
     
 @app.get("/hello")
 def print_date(request: Request, response: Response):
     return_date = date.today()
     #response.headers["content-type"] = "text/html"
     return templates.TemplateResponse("hello.html", {"request": request, "date": return_date})
+
+# zad. 3.2
 
 @app.get("/login_session", status_code = 201)
 @app.post("/login_session", status_code = 201)
@@ -34,8 +38,8 @@ def login_session(response: Response, credentials: HTTPBasicCredentials = Depend
     response.set_cookie(key="session_token", value=session_token)
     app.stored_login_session.append(session_token)
     
-    #if len(app.stored_login_session) > 5:
-    #    app.stored_login_session.pop(0)
+    if len(app.stored_login_session) > 5:
+        app.stored_login_session.pop(0)
         
 @app.get("/login_token", status_code = 201)
 @app.post("/login_token", status_code = 201)
@@ -50,10 +54,12 @@ def login_token(response: Response, credentials: HTTPBasicCredentials = Depends(
     response.set_cookie(key="value_token", value=session_token)
     app.stored_login_token.append(session_token)
     
-    #if len(app.stored_login_token) > 5:
-    #    app.stored_login_token.pop(0)
+    if len(app.stored_login_token) > 5:
+        app.stored_login_token.pop(0)
     
     return {"token": session_token}
+
+# zad. 3.3
 
 @app.get("/welcome_session", status_code=200)
 def welcome_session(response: Response, session_token: str = Cookie(None), format: str = ""):
@@ -79,6 +85,8 @@ def welcome_token(response: Response, token: str, format: str = ""):
     else:
         return PlainTextResponse(content="Welcome!")
 
+# zad. 3.4
+
 @app.get("/logged_out", status_code=200)
 def logged_out(response: Response, format: str = ""):
     if format == 'json':
@@ -90,7 +98,7 @@ def logged_out(response: Response, format: str = ""):
 
 @app.get("/logout_session", status_code=302)    
 @app.delete("/logout_session", status_code=302)
-def logout_session(response: Response, format: str, session_token: str = Cookie(None)):
+def logout_session(session_token: str = Cookie(None), format: str = ""):
     if (session_token not in app.stored_login_session) or (session_token == ""):
         raise HTTPException(status_code=401, detail="Unathorised")
     
@@ -99,7 +107,7 @@ def logout_session(response: Response, format: str, session_token: str = Cookie(
     
 @app.get("/logout_token", status_code=302)    
 @app.delete("/logout_token", status_code=302)
-def logout_token(response: Response, token: str, format: str):
+def logout_token(token: str = "", format: str = ""):
     if (token not in app.stored_login_token) or (token == ""):
         raise HTTPException(status_code=401, detail="Unathorised")
     
