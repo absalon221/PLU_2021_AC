@@ -1,13 +1,51 @@
 from fastapi.testclient import TestClient
-import pytest
+import pytest, requests
 from main import app
+from requests.auth import HTTPBasicAuth
 
 client = TestClient(app)
 
-def test_login_session():
+def test_logout_session_ok():
     login = "4dm1n"
     password = "NotSoSecurePa$$"
-    response = client.post(f"/login_session?login={login}&password={password}")
+    # logowanie przez session
+    #response = client.post("/login_session", auth=HTTPBasicAuth(login, password))
+    # logowanie przez token
+    response = client.post("/login_token", auth=HTTPBasicAuth(login, password))
+    token_val = response.json()["token"]
+       
+    assert response.status_code == 201
     
-    assert response == "OK"
+    response = client.delete("/logout_session?format=json",
+                             cookies = {"session_token": token_val})
     
+    assert response.status_code == 302
+    
+def test_logout_session_notok():
+    token_val = "B"
+    response = client.delete("/logout_session?format=json",
+                             cookies = {"session_token": token_val})
+    
+    assert response.status_code == 401
+    
+def test_logout_token_ok():
+    login = "4dm1n"
+    password = "NotSoSecurePa$$"
+    # logowanie przez session
+    response = client.post("/login_session", auth=HTTPBasicAuth(login, password))
+    token_val = "A"
+    # logownie przez token
+    #response = client.post("/login_token", auth=HTTPBasicAuth(login, password))
+    #token_val = response.json()["token"]
+       
+    assert response.status_code == 201
+    
+    response = client.delete(f"/logout_token?token={token_val}")
+    
+    assert response.status_code == 302
+
+def test_logout_token_nieok():
+    token_val = "B"
+    response = client.delete(f"/logout_token?token={token_val}")
+    
+    assert response.status_code == 401
