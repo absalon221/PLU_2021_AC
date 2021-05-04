@@ -38,7 +38,7 @@ def login_session(response: Response, credentials: HTTPBasicCredentials = Depend
     
     #session_token = sha256(f"{credentials.username}{credentials.password}{str(random.randint(0, 12345))}".encode()).hexdigest()
     session_token = "A" # tymczasowy token
-    response.set_cookie(key="session_token", value=session_token)
+    response.set_cookie(key="session_token", value=session_token) #ustawianie cookie
     app.stored_login_session.append(session_token) # dodawanie session token
     
     if len(app.stored_login_session) > 3:
@@ -55,7 +55,6 @@ def login_token(response: Response, credentials: HTTPBasicCredentials = Depends(
     
     #session_token = sha256(f"{credentials.username}{credentials.password}{str(random.randint(0, 12345))}".encode()).hexdigest()
     session_token = "AA" # tymczasowy token
-    #response.set_cookie(key="value_token", value=session_token)
     app.stored_login_token.append(session_token) # dodawanie login token
     
     if len(app.stored_login_token) > 3:
