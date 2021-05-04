@@ -95,16 +95,24 @@ def logout_session(session_token: str = Cookie(None), format: str = ""):
     if (session_token not in app.stored_login_session) and (session_token not in app.stored_login_token):
         raise HTTPException(status_code=401, detail="Unathorised")
     
-    app.stored_login_session = ""
+    if session_token in app.stored_login_session:
+        app.stored_login_session.remove(session_token)
+    else:
+        app.stored_login_token.remove(session_token)
+
     return RedirectResponse(url=f"/logged_out?format={format}", status_code=302)
 
 @app.get("/logout_token")    
 @app.delete("/logout_token")
-def logout_token(token: str = "", format: str = ""):
+def logout_token(token: str, format: str = ""):
     if ((token not in app.stored_login_token) and (token not in app.stored_login_session)) or (token == ""):
         raise HTTPException(status_code=401, detail="Unathorised")
     
-    app.stored_login_token = ""
+    if token in app.stored_login_token:
+        app.stored_login_token.remove(token)
+    else:
+        app.stored_login_session.remove(token)
+        
     return RedirectResponse(url=f"/logged_out?format={format}", status_code=302)
 
 @app.get("/logged_out", status_code=200)
