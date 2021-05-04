@@ -37,7 +37,7 @@ def login_session(response: Response, credentials: HTTPBasicCredentials = Depend
         raise HTTPException(status_code=401)
     
     #session_token = sha256(f"{credentials.username}{credentials.password}{str(random.randint(0, 12345))}".encode()).hexdigest()
-    session_token = "A"
+    session_token = "A" # tymczasowy token
     response.set_cookie(key="session_token", value=session_token)
     app.stored_login_session.append(session_token) # dodawanie session token
     
@@ -54,7 +54,7 @@ def login_token(response: Response, credentials: HTTPBasicCredentials = Depends(
         raise HTTPException(status_code=401)
     
     #session_token = sha256(f"{credentials.username}{credentials.password}{str(random.randint(0, 12345))}".encode()).hexdigest()
-    session_token = "AA"
+    session_token = "AA" # tymczasowy token
     #response.set_cookie(key="value_token", value=session_token)
     app.stored_login_token.append(session_token) # dodawanie login token
     
@@ -89,7 +89,7 @@ def welcome_token(response: Response, token: str, format: str = ""):
     else:
         return PlainTextResponse(content="Welcome!")
 
-# zad. 3.4
+# zad. 3.4 // 3.5
 
 @app.get("/logout_session")    
 @app.delete("/logout_session")
