@@ -44,7 +44,7 @@ async def products(id: int):
         return {"id": products['ProductID'], "name": products['ProductName']}
     raise HTTPException(status_code=404)   
 
-### ZADANIE 4.3 ###
+### ZADANIE 4.3 ### fghj
 
 @app.get("/employees", status_code=200)
 async def employees(limit: int = "", offset: int = "", order: str = ""):
