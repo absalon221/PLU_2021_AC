@@ -24,3 +24,10 @@ def test_customers():
     
         assert response.status_code == 200
         print(response.json())
+        
+def test_products():
+    with TestClient(app) as client:
+        response = client.get("/products/0")
+        
+        #assert response.json() == {"id": 1, "name": "Chai"}
+        assert response.status_code == 404
