@@ -23,4 +23,4 @@ def test_customers():
         response = client.get("/customers")
     
         assert response.status_code == 200
-        print(response.json()) #== {"customers": [{"id": "ALFKI", "name": "Alfreds Futterkiste", "full_adress": "Obere Str. 57 Berlin  12209 Germany"}]}
+        print(response.json())
