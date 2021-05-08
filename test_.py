@@ -46,3 +46,14 @@ def test_employees():
         #                                         {"id":7,"last_name":"King","first_name":"Robert","city":"London"},
         #                                         {"id":8,"last_name":"Callahan","first_name":"Laura","city":"Seattle"},
         #                                         {"id":9,"last_name":"Dodsworth","first_name":"Anne","city":"London"},]}
+        
+def test_product_order():
+    with TestClient(app) as client:
+        response = client.get("/products/0/orders")
+        assert response.status_code == 404
+        
+        response = client.get("/products/1/orders")
+        assert response.status_code == 200
+        
+        response = client.get("/products/11/orders")
+        assert response.json() == {"orders": [{"id": "10248", "customer": "Vins et alcools Chevalier", "quantity": "12", "total_price": "{:.2f}".format((14*12)-(0*(14*12)))}]}

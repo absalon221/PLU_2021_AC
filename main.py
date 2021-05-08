@@ -85,3 +85,19 @@ async def products_extended():
                                          JOIN Suppliers ON Products.SupplierID = Suppliers.SupplierID ORDER BY Products.ProductID''').fetchall()
     return {"products_extended": [{"id": x['ProductID'], "name": x['ProductName'], "category": x['CategoryName'], "supplier": x['CompanyName']} for x in products]}
     
+### ZADANIE 4.5 ###
+
+@app.get("/products/{id}/orders", status_code=200)
+async def products_orders(id: int):
+    app.db_connection.row_factory = sqlite3.Row
+    if len(app.db_connection.execute("SELECT rowid FROM Products WHERE ProductID = :id", {'id': id}).fetchall()) == 0:
+    #or len(app.db_connection.execute("SELECT rowid FROM [Order Details] WHERE ProductID = :id", {'id': id}).fetchall()) == 0:
+        raise HTTPException(status_code=404)
+        
+    products = app.db_connection.execute('''SELECT Orders.OrderID, Customers.CompanyName, [Order Details].Quantity, ([Order Details].UnitPrice * [Order Details].Quantity) - ([Order Details].Discount * ([Order Details].UnitPrice * [Order Details].Quantity)) AS TotalPrice FROM Orders
+                                         JOIN [Order Details] ON Orders.OrderID = [Order Details].OrderID
+                                         JOIN Customers ON Customers.CustomerID = Orders.CustomerID
+                                         WHERE [Order Details].ProductID = :id ORDER BY Orders.OrderID''', {'id': id}).fetchall()
+    #if len(products) == 0:
+    #    raise HTTPException(status_code=404)
+    return {"orders": [{"id": x['OrderID'], "customer": x['CompanyName'], "quantity": x['Quantity'], "total_price": "{:.2f}".format(x['TotalPrice'])} for x in products]}
