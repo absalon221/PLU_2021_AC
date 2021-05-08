@@ -43,4 +43,23 @@ async def products(id: int):
     if products: 
         return {"id": products['ProductID'], "name": products['ProductName']}
     raise HTTPException(status_code=404)   
+
+### ZADANIE 4.3 ###
+
+@app.get("/employees", status_code=200)
+async def employees(limit: int, offset: int, order: str = ""):
+    app.db_connection.row_factory = sqlite3.Row
     
+    if order == "":
+        order = "EmployeeID"
+    elif order == "first_name":
+        order = "FirstName"
+    elif order == "last_name":
+        order = "LastName"
+    elif order == "city":
+        order = "City"
+    else:
+        raise HTTPException(status_code=400)
+    
+    employees = app.db_connection.execute(f"SELECT EmployeeID, LastName, FirstName, City FROM Employees ORDER BY {order}").fetchall()
+    return {"employees": [{"id": x["EmployeeID"], "last_name": x["LastName"], "first_name": x["FirstName"], "city": x["City"]} for x in employees]}
