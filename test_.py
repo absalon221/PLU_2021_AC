@@ -1,85 +1,19 @@
 from fastapi.testclient import TestClient
-import pytest, requests
+import pytest, aiosqlite
 from main import app
-from requests.auth import HTTPBasicAuth
 
-client = TestClient(app)
+#client = TestClient(app)
 
-def test_logout_session_ok():
-    login = "4dm1n"
-    password = "NotSoSecurePa$$"
-    # logowanie przez session
-    #response = client.post("/login_session", auth=HTTPBasicAuth(login, password))
-    # logowanie przez token
-    response = client.post("/login_token", auth=HTTPBasicAuth(login, password))
-    token_val = response.json()["token"]
-       
-    assert response.status_code == 201
+def test_categories():
+    with TestClient(app) as client:
+        response = client.get("/categories")
     
-    response = client.delete("/logout_session?format=json",
-                             cookies = {"session_token": token_val})
-    
-    assert response.status_code == 302
-    
-def test_logout_session_notok():
-    token_val = "B"
-    response = client.delete("/logout_session?format=json",
-                             cookies = {"session_token": token_val})
-    
-    assert response.status_code == 401
-    
-def test_logout_token_ok():
-    login = "4dm1n"
-    password = "NotSoSecurePa$$"
-    # logowanie przez session
-    response = client.post("/login_session", auth=HTTPBasicAuth(login, password))
-    token_val = "A"
-    # logownie przez token
-    #response = client.post("/login_token", auth=HTTPBasicAuth(login, password))
-    #token_val = response.json()["token"]
-       
-    assert response.status_code == 201
-    
-    response = client.delete(f"/logout_token?token={token_val}")
-    
-    assert response.status_code == 302
-
-def test_logout_token_nieok():
-    token_val = "B"
-    response = client.delete(f"/logout_token?token={token_val}")
-    
-    assert response.status_code == 401
-    
-def test_sesja_token_sesja_token():
-    login = "4dm1n"
-    password = "NotSoSecurePa$$"
-    
-    response = client.post("/login_session", auth=HTTPBasicAuth(login, password))
-    assert response.status_code == 201
-    
-    response = client.post("/login_token", auth=HTTPBasicAuth(login, password))
-    token_val = "B" # response.json()["token"]
-    assert response.status_code == 201
-    
-    response = client.delete("/logout_session?format=json")
-    assert response.status_code == 302
-    
-    response = client.delete(f"/logout_token?token={token_val}")
-    assert response.status_code == 401
-    
-def test_token_sesja_token_sesja():
-    login = "4dm1n"
-    password = "NotSoSecurePa$$"
-    
-    response = client.post("/login_token", auth=HTTPBasicAuth(login, password))
-    token_val = response.json()["token"]
-    assert response.status_code == 201
-    
-    response = client.post("/login_session", auth=HTTPBasicAuth(login, password))
-    assert response.status_code == 201
-    
-    response = client.delete(f"/logout_token?token={token_val}")
-    assert response.status_code == 302
-    
-    response = client.delete("/logout_session?format=json")
-    assert response.status_code == 302
+        assert response.status_code == 200
+        assert response.json() == {"Categories": [{"id": 1, "name": "Beverages"},
+                                              {"id": 2, "name": "Condiments"},
+                                              {"id": 3, "name": "Confections"},
+                                              {"id": 4, "name": "Dairy Products"},
+                                              {"id": 5, "name": "Grains/Cereals"},
+                                              {"id": 6, "name": "Meat/Poultry"},
+                                              {"id": 7, "name": "Produce"},
+                                              {"id": 8, "name": "Seafood"}]}
