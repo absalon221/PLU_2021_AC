@@ -34,15 +34,15 @@ def test_products():
         
 def test_employees():
     with TestClient(app) as client:
-        response = client.get("/employees?limit=1&offset=10")
+        response = client.get("/employees?offset=2")
         
-        assert response.status_code == 200
-        assert response.json() == {"employees": [{"id":1,"last_name":"Davolio","first_name":"Nancy","city":"Seattle"},
-                                                 {"id":2,"last_name":"Fuller","first_name":"Andrew","city":"Tacoma"},
-                                                 {"id":3,"last_name":"Leverling","first_name":"Janet","city":"Kirkland"},
-                                                 {"id":4,"last_name":"Peacock","first_name":"Margaret","city":"Redmond"},
-                                                 {"id":5,"last_name":"Buchanan","first_name":"Steven","city":"London"},
-                                                 {"id":6,"last_name":"Suyama","first_name":"Michael","city":"London"},
-                                                 {"id":7,"last_name":"King","first_name":"Robert","city":"London"},
-                                                 {"id":8,"last_name":"Callahan","first_name":"Laura","city":"Seattle"},
-                                                 {"id":9,"last_name":"Dodsworth","first_name":"Anne","city":"London"},]}
+        assert response.status_code == 400
+        #assert response.json() == {"employees": [{"id":1,"last_name":"Davolio","first_name":"Nancy","city":"Seattle"},
+        #                                         {"id":2,"last_name":"Fuller","first_name":"Andrew","city":"Tacoma"},
+        #                                         {"id":3,"last_name":"Leverling","first_name":"Janet","city":"Kirkland"},
+        #                                         {"id":4,"last_name":"Peacock","first_name":"Margaret","city":"Redmond"},
+        #                                         {"id":5,"last_name":"Buchanan","first_name":"Steven","city":"London"},
+        #                                         {"id":6,"last_name":"Suyama","first_name":"Michael","city":"London"},
+        #                                         {"id":7,"last_name":"King","first_name":"Robert","city":"London"},
+        #                                         {"id":8,"last_name":"Callahan","first_name":"Laura","city":"Seattle"},
+        #                                         {"id":9,"last_name":"Dodsworth","first_name":"Anne","city":"London"},]}
