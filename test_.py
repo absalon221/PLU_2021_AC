@@ -9,7 +9,7 @@ def test_categories():
         response = client.get("/categories")
     
         assert response.status_code == 200
-        assert response.json() == {"Categories": [{"id": 1, "name": "Beverages"},
+        assert response.json() == {"categories": [{"id": 1, "name": "Beverages"},
                                               {"id": 2, "name": "Condiments"},
                                               {"id": 3, "name": "Confections"},
                                               {"id": 4, "name": "Dairy Products"},
@@ -17,3 +17,10 @@ def test_categories():
                                               {"id": 6, "name": "Meat/Poultry"},
                                               {"id": 7, "name": "Produce"},
                                               {"id": 8, "name": "Seafood"}]}
+        
+def test_customers():
+    with TestClient(app) as client:
+        response = client.get("/customers")
+    
+        assert response.status_code == 200
+        print(response.json()) #== {"customers": [{"id": "ALFKI", "name": "Alfreds Futterkiste", "full_adress": "Obere Str. 57 Berlin  12209 Germany"}]}
