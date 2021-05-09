@@ -111,9 +111,10 @@ async def products_orders(id: int):
 @app.post("/categories", status_code=201)
 async def categories_insert_row(cat_to_add: new_Category):
     app.db_connection.row_factory = sqlite3.Row
-    #id = app.db_connection.execute("SELECT COUNT(*) FROM Categories").fetchone()[0] + 1
-    id = 12323
+    id = app.db_connection.execute("SELECT COUNT(*) FROM Categories").fetchone()[0] + 1
+    #id = 12323
     app.db_connection.execute("INSERT INTO Categories (CategoryID, CategoryName) VALUES (:id, :name)", {"id": id, "name": cat_to_add.name})
+    return {"id": id, "name": cat_to_add.name}
     
 # modyfikacja kategorii
 @app.put("/categories/{id}", status_code=200)
@@ -122,6 +123,7 @@ async def categories_modify_row(cat_to_modify: new_Category, id: int):
     if len(app.db_connection.execute("SELECT rowid FROM Categories WHERE CategoryID = :id", {'id': id}).fetchall()) == 0:
         raise HTTPException(status_code=404)
     app.db_connection.execute("UPDATE Categories SET CategoryName = :new_name WHERE CategoryID = :id", {"id": id, "new_name": cat_to_modify.name})
+    return {"id": id, "name": cat_to_modify.name}
     
 # usuwanie kategorii
 @app.delete("/categories", status_code=200)

@@ -67,11 +67,13 @@ def test_modify_category():
     with TestClient(app) as client:
         response = client.post("/categories", json = {"name": "test category"})
         assert response.status_code == 201
+        assert response.json() == {"id": 9, "name": "test category"}
         
-        response = client.put("/categories/12323", json = {"name": "BLUBOR"})
-        assert response.status_code == 200      
+        response = client.put("/categories/9", json = {"name": "BLUBOR"})
+        assert response.status_code == 200
+        assert response.json() == {"id": 9, "name": "BLUBOR"}      
         
-        response = client.delete("/categories/12323")
+        response = client.delete("/categories/9")
         assert response.status_code == 200
         assert response.json() == {"deleted": 1}
         
