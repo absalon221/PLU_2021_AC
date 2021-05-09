@@ -111,10 +111,15 @@ async def products_orders(id: int):
 @app.post("/categories", status_code=201)
 async def categories_insert_row(cat_to_add: new_Category):
     app.db_connection.row_factory = sqlite3.Row
-    id = app.db_connection.execute("SELECT COUNT(*) FROM Categories").fetchone()[0] + 1
-    #id = 12323
-    app.db_connection.execute("INSERT INTO Categories (CategoryID, CategoryName) VALUES (:id, :name)", {"id": id, "name": cat_to_add.name})
-    return {"id": id, "name": cat_to_add.name}
+    #id = app.db_connection.execute("SELECT COUNT(*) FROM Categories").fetchone()[0] + 1
+    
+    cursor = app.db_connection.execute("INSERT INTO Categories (CategoryName) VALUES (?)", (cat_to_add.name, ))
+    app.db_connection.commit()
+    id = cursor.lastrowid
+    
+    added = app.db_connection.execute("SELECT CategoryID as id, CategoryName as name FROM Categories WHERE CategoryID = ?", (id, )).fetchone()
+    #return {"id": id, "name": cat_to_add.name}
+    return added
     
 # modyfikacja kategorii
 @app.put("/categories/{id}", status_code=200)
@@ -122,8 +127,13 @@ async def categories_modify_row(cat_to_modify: new_Category, id: int):
     app.db_connection.row_factory = sqlite3.Row
     if len(app.db_connection.execute("SELECT rowid FROM Categories WHERE CategoryID = :id", {'id': id}).fetchall()) == 0:
         raise HTTPException(status_code=404)
-    app.db_connection.execute("UPDATE Categories SET CategoryName = :new_name WHERE CategoryID = :id", {"id": id, "new_name": cat_to_modify.name})
-    return {"id": id, "name": cat_to_modify.name}
+    
+    app.db_connection.execute("UPDATE Categories SET CategoryName = ? WHERE CategoryID = ?", (cat_to_modify.name, id, ))
+    app.db_connection.commit()
+    
+    modified = app.db_connection.execute("SELECT CategoryID as id, CategoryName as name FROM Categories WHERE CategoryID = ?", (id, )).fetchone()
+    #return {"id": modified[0]['CategoryID'], "name": modified[0]['CategoryName']}
+    return modified
     
 # usuwanie kategorii
 @app.delete("/categories/{id}", status_code=200)
@@ -131,5 +141,8 @@ async def categories_delete_row(id: int):
     app.db_connection.row_factory = sqlite3.Row
     if len(app.db_connection.execute("SELECT rowid FROM Categories WHERE CategoryID = :id", {'id': id}).fetchall()) == 0:
         raise HTTPException(status_code=404)
-    app.db_connection.execute("DELETE FROM Categories WHERE CategoryID = :id", {"id": id})
+    
+    app.db_connection.execute("DELETE FROM Categories WHERE CategoryID = ?", (id, ))
+    app.db_connection.commit()
+    
     return {"deleted": 1}
