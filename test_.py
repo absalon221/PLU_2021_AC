@@ -57,3 +57,26 @@ def test_product_order():
         
         response = client.get("/products/11/orders")
         assert response.json() == {"orders": [{"id": "10248", "customer": "Vins et alcools Chevalier", "quantity": "12", "total_price": "{:.2f}".format((14*12)-(0*(14*12)))}]}
+        
+def test_add_category():
+    with TestClient(app) as client:
+        response = client.post("/categories", json = {"name": "test category"})
+        assert response.status_code == 201
+        
+def test_modify_category():
+    with TestClient(app) as client:
+        response = client.post("/categories", json = {"name": "test category"})
+        assert response.status_code == 201
+        
+        response = client.put("/categories/12323", json = {"name": "BLUBOR"})
+        assert response.status_code == 200      
+        
+        response = client.delete("/categories/12323")
+        assert response.status_code == 200
+        assert response.json() == {"deleted": 1}
+        
+        response = client.put("/categories/5846", json = {"name": "BLUBOR"})
+        assert response.status_code == 404
+        
+        response = client.delete("/categories/5846")
+        assert response.status_code == 404

@@ -6,6 +6,9 @@ from typing import List
 
 app = FastAPI()
 
+class new_Category(BaseModel):
+    name: str
+
 #######
 
 @app.on_event("startup")
@@ -101,3 +104,30 @@ async def products_orders(id: int):
     #if len(products) == 0:
     #    raise HTTPException(status_code=404)
     return {"orders": [{"id": x['OrderID'], "customer": x['CompanyName'], "quantity": x['Quantity'], "total_price": x['TotalPrice']} for x in products]}
+
+### ZADANIE 4.6 ###
+
+# dodawanie kategorii
+@app.post("/categories", status_code=201)
+async def categories_insert_row(cat_to_add: new_Category):
+    app.db_connection.row_factory = sqlite3.Row
+    #id = app.db_connection.execute("SELECT COUNT(*) FROM Categories").fetchone()[0] + 1
+    id = 12323
+    app.db_connection.execute("INSERT INTO Categories (CategoryID, CategoryName) VALUES (:id, :name)", {"id": id, "name": cat_to_add.name})
+    
+# modyfikacja kategorii
+@app.put("/categories/{id}", status_code=200)
+async def categories_modify_row(cat_to_modify: new_Category, id: int):
+    app.db_connection.row_factory = sqlite3.Row
+    if len(app.db_connection.execute("SELECT rowid FROM Categories WHERE CategoryID = :id", {'id': id}).fetchall()) == 0:
+        raise HTTPException(status_code=404)
+    app.db_connection.execute("UPDATE Categories SET CategoryName = :new_name WHERE CategoryID = :id", {"id": id, "new_name": cat_to_modify.name})
+    
+# usuwanie kategorii
+@app.delete("/categories", status_code=200)
+async def categories_delete_row(id: int):
+    app.db_connection.row_factory = sqlite3.Row
+    if len(app.db_connection.execute("SELECT rowid FROM Categories WHERE CategoryID = :id", {'id': id}).fetchall()) == 0:
+        raise HTTPException(status_code=404)
+    app.db_connection.execute("DELETE FROM Categories WHERE CategoryID = :id", {"id": id})
+    return {"deleted": 1}
