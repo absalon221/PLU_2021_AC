@@ -65,20 +65,57 @@ def test_add_category():
         
 def test_modify_category():
     with TestClient(app) as client:
-        response = client.post("/categories", json = {"name": "test category"})
+        response = client.post("/categories", json = {"name": "cat1"})
         assert response.status_code == 201
-        assert response.json() == {"id": 9, "name": "test category"}
+        assert response.json() == {"id": 9, "name": "cat1"}
         
-        response = client.put("/categories/9", json = {"name": "BLUBOR"})
+        response = client.post("/categories", json = {"name": "cat2"})
+        assert response.status_code == 201
+        assert response.json() == {"id": 10, "name": "cat2"}
+        
+        response = client.put("/categories/9", json = {"name": "NEWCAT1"})
         assert response.status_code == 200
-        assert response.json() == {"id": 9, "name": "BLUBOR"}      
+        assert response.json() == {"id": 9, "name": "NEWCAT1"}      
+        
+        response = client.get("/categories")
+        assert response.status_code == 200
+        assert response.json() == {"categories": [{"id": 1, "name": "Beverages"},
+                                              {"id": 2, "name": "Condiments"},
+                                              {"id": 3, "name": "Confections"},
+                                              {"id": 4, "name": "Dairy Products"},
+                                              {"id": 5, "name": "Grains/Cereals"},
+                                              {"id": 6, "name": "Meat/Poultry"},
+                                              {"id": 7, "name": "Produce"},
+                                              {"id": 8, "name": "Seafood"},
+                                              {"id": 9, "name": "NEWCAT1"},
+                                              {"id": 10, "name": "cat2"}]}
         
         response = client.delete("/categories/9")
         assert response.status_code == 200
         assert response.json() == {"deleted": 1}
         
-        response = client.put("/categories/5846", json = {"name": "BLUBOR"})
+        response = client.put("/categories/10", json = {"name": "NEWCAT2"})
+        assert response.status_code == 200
+        assert response.json() == {"id": 10, "name": "NEWCAT2"} 
+        
+        response = client.delete("/categories/123123123")
         assert response.status_code == 404
         
-        response = client.delete("/categories/5846")
+        response = client.get("/categories")
+        assert response.status_code == 200
+        assert response.json() == {"categories": [{"id": 1, "name": "Beverages"},
+                                              {"id": 2, "name": "Condiments"},
+                                              {"id": 3, "name": "Confections"},
+                                              {"id": 4, "name": "Dairy Products"},
+                                              {"id": 5, "name": "Grains/Cereals"},
+                                              {"id": 6, "name": "Meat/Poultry"},
+                                              {"id": 7, "name": "Produce"},
+                                              {"id": 8, "name": "Seafood"},
+                                              {"id": 10, "name": "NEWCAT2"}]}
+        
+        response = client.put("/categories/123123123", json = {"name": "BLUBOR"})
         assert response.status_code == 404
+        
+        response = client.delete("/categories/10")
+        assert response.status_code == 200
+        assert response.json() == {"deleted": 1}

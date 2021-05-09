@@ -126,7 +126,7 @@ async def categories_modify_row(cat_to_modify: new_Category, id: int):
     return {"id": id, "name": cat_to_modify.name}
     
 # usuwanie kategorii
-@app.delete("/categories", status_code=200)
+@app.delete("/categories/{id}", status_code=200)
 async def categories_delete_row(id: int):
     app.db_connection.row_factory = sqlite3.Row
     if len(app.db_connection.execute("SELECT rowid FROM Categories WHERE CategoryID = :id", {'id': id}).fetchall()) == 0:
