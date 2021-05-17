@@ -38,3 +38,21 @@ class Supplier(BaseModel):
     
     class Config:
         orm_mode = True
+
+### ZAD. 5.2 ###
+
+class Category(BaseModel):
+    CategoryID: PositiveInt
+    CategoryName: str
+    
+    class Config:
+        orm_mode = True
+
+class SupplierProducts(BaseModel):
+    ProductID: PositiveInt
+    ProductName: str
+    Category: Optional[Category]
+    discontinued: int
+    
+    class Config:
+        orm_model = True
