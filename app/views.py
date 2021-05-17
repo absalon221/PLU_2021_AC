@@ -40,7 +40,7 @@ async def get_supplier(supplier_id: PositiveInt, db: Session = Depends(get_db)):
 
 ### ZAD. 5.2 ###
 
-@router.get("/suppliers/{supplier_id}/products", response_model=schemas.SupplierProducts)
+@router.get("/suppliers/{supplier_id}/products", response_model=List[schemas.SupplierProducts])
 async def supplier_products(supplier_id: PositiveInt, db: Session = Depends(get_db)):
     db_products = crud.get_supplier_products(db, supplier_id)
     if db_products is None:
