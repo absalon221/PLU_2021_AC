@@ -18,7 +18,7 @@ def get_shipper(db: Session, shipper_id: int):
 ### ZAD. 5.1 ###
 
 def get_all_suppliers(db: Session):
-    return db.query(models.Supplier).all()
+    return db.query(models.Supplier).order_by(models.Supplier.SupplierID).all()
 
 def get_supplier(db: Session, supplier_id: int):
     return(db.query(models.Supplier).filter(models.Supplier.SupplierID == supplier_id).first())
