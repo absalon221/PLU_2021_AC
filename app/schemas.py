@@ -42,8 +42,8 @@ class Supplier(BaseModel):
 ### ZAD. 5.2 ###
 
 class Category(BaseModel):
-    CategoryID: int
-    CategoryName: str
+    CategoryID: Optional[int]
+    CategoryName: Optional[str]
     
     class Config:
         orm_mode = True
