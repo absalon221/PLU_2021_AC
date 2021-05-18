@@ -52,10 +52,12 @@ def create_new_supplier(db: Session, new_supplier: NewSupplier):
 ### ZAD. 5.4 ###
 
 def update_supplier(db: Session, supplier_id: int, new_supplier: UpdateSupplier):
-    supplier_dict=new_supplier.dict()
+    supplier_dict={key: val for key, val in new_supplier.dict().items() if val is not None}
     if bool(supplier_dict):
         db.execute(update(models.Supplier).where(models.Supplier.SupplierID == supplier_id).values(**supplier_dict))
-        db. commit()
+        db.commit()
+    
+    # problem - nadpisuje pustymi wartościami
     
     return get_supplier(db, supplier_id)
     
