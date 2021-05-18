@@ -26,5 +26,5 @@ def get_supplier(db: Session, supplier_id: int):
 ### ZAD. 5.2 ###
 
 def get_supplier_products(db: Session, supplier_id:int):
-    return db.query(models.Product).join(models.Category).filter(models.Product.SupplierID == supplier_id).order_by(models.Product.ProductID.desc()).all()
+    return db.query(models.Product).filter(models.Product.SupplierID == supplier_id).order_by(models.Product.ProductID.desc()).all()
     #return db.query(models.Product).join(models.Category).all()
