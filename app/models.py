@@ -15,7 +15,7 @@ class Category(Base):
     Description = Column(Text)
     Picture = Column(LargeBinary)
 
-    products = relationship('Product', back_populates='category')
+    products = relationship('Product', back_populates='Category')
 
 class Customercustomerdemo(Base):
     __tablename__ = 'customercustomerdemo'
@@ -121,7 +121,7 @@ class Product(Base):
     Discontinued = Column(Integer, nullable=False)
 
     supplier = relationship('Supplier', back_populates='products')
-    category = relationship('Category', back_populates='products')
+    Category = relationship('Category', back_populates='products')
 
 class Region(Base):
     __tablename__ = 'region'

@@ -60,4 +60,11 @@ def update_supplier(db: Session, supplier_id: int, new_supplier: UpdateSupplier)
     # problem - nadpisuje pustymi wartościami
     
     return get_supplier(db, supplier_id)
-    
+
+### ZAD. 5.5 ###
+
+def delete_supplier(db: Session, supplier_id: int):
+    item = db.query(models.Supplier).filter(models.Supplier.SupplierID == supplier_id).one()
+    db.delete(item)
+    db.commit()
+    return None

@@ -1,8 +1,9 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from pydantic import PositiveInt
 from sqlalchemy.orm import Session
+from starlette.status import HTTP_204_NO_CONTENT
 
 from . import crud, schemas
 from .database import get_db
@@ -62,3 +63,14 @@ async def update_supplier(supplier_id: PositiveInt, new_supplier: schemas.Update
     if db_updated_supplier is None:
         raise HTTPException(status_code=404, detail="Supplier not found")
     return db_updated_supplier
+
+### ZAD. 5.5 ###
+
+@router.delete("/suppliers/{supplier_id}")
+async def delete_supplier(supplier_id: PositiveInt, response: Response, db: Session = Depends(get_db)):
+    if crud.get_supplier(db, supplier_id) is None:
+        raise HTTPException(status_code=404, detail="Supplier not found")
+    
+    crud.delete_supplier(db, supplier_id)
+    response.status_code = HTTP_204_NO_CONTENT
+    return None
