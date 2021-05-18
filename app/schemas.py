@@ -1,5 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel, PositiveInt, constr
+from sqlalchemy.sql.sqltypes import SmallInteger
 
 ### Z ZAJĘĆ ###
 
@@ -42,8 +43,8 @@ class Supplier(BaseModel):
 ### ZAD. 5.2 ###
 
 class Category(BaseModel):
-    CategoryID: Optional[int]
-    CategoryName: Optional[str]
+    CategoryID: int
+    CategoryName: Optional[constr(max_length=15)]
     
     class Config:
         orm_mode = True
@@ -51,7 +52,7 @@ class Category(BaseModel):
 class SupplierProduct(BaseModel):
     ProductID: int
     ProductName: str
-    Category: Optional[Category]
+    Category: Category
     Discontinued: int
     
     class Config:
