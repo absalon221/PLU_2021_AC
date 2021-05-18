@@ -53,3 +53,10 @@ async def get_supplier_products(supplier_id: PositiveInt, db: Session = Depends(
 async def create_supplier(new_supplier: schemas.NewSupplier, db: Session = Depends(get_db)):
     db_new_supplier = crud.create_new_supplier(db, new_supplier)
     return db_new_supplier
+
+### ZAD. 5.4 ###
+
+@router.put("/suppliers/{supplier_id}", response_model=schemas.Supplier)
+async def update_supplier(supplier_id: PositiveInt, new_supplier: schemas.UpdateSupplier, db: Session = Depends(get_db)):
+    db_updated_supplier = crud.update_supplier(db, supplier_id, new_supplier)
+    return db_updated_supplier

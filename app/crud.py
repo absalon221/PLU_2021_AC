@@ -1,7 +1,9 @@
 from sqlalchemy.orm import Session
 
 from . import models
-from .schemas import NewSupplier
+from .schemas import NewSupplier, UpdateSupplier
+
+from sqlalchemy import update
 
 ### Z ZAJĘĆ ###
 
@@ -46,4 +48,14 @@ def create_new_supplier(db: Session, new_supplier: NewSupplier):
     db.add(new_supplier_output)
     db.commit()
     return new_supplier_output
+
+### ZAD. 5.4 ###
+
+def update_supplier(db: Session, supplier_id: int, new_supplier: UpdateSupplier):
+    supplier_dict=new_supplier.dict()
+    if bool(supplier_dict):
+        db.execute(update(models.Supplier).where(models.Supplier.SupplierID == supplier_id).values(**supplier_dict))
+        db. commit()
+    
+    return get_supplier(db, supplier_id)
     
