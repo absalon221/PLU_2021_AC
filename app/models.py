@@ -1,5 +1,5 @@
 # coding: utf-8
-from sqlalchemy import CHAR, Column, Date, Float, Integer, LargeBinary, SmallInteger, String, Table, Text, text
+from sqlalchemy import CHAR, Column, Date, Float, Integer, LargeBinary, SmallInteger, String, Table, Text, ForeignKey, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -111,8 +111,8 @@ class Product(Base):
 
     ProductID = Column(SmallInteger, primary_key=True, server_default=text("nextval('products_productid_seq'::regclass)"))
     ProductName = Column(String(40), nullable=False)
-    SupplierID = Column(SmallInteger)
-    CategoryID = Column(SmallInteger)
+    SupplierID = Column(SmallInteger, ForeignKey("suppliers.SupplierID"))
+    CategoryID = Column(SmallInteger, ForeignKey("categories.CategoryID"))
     QuantityPerUnit = Column(String(20))
     UnitPrice = Column(Float)
     UnitsInStock = Column(SmallInteger)

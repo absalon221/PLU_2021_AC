@@ -1,4 +1,4 @@
---
+﻿--
 -- PostgreSQL Northwind Database v1.0 from Ramiro Estigarribia Canese  
 -- you may contact him at email   ramiro.estigarribia@rieder.com.py 
 --
@@ -3799,7 +3799,7 @@ ALTER TABLE ONLY orders
 
 --
 -- Name: pk_products; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
---
+-- 
 
 ALTER TABLE ONLY products
     ADD CONSTRAINT pk_products PRIMARY KEY ("ProductID");
@@ -3843,6 +3843,24 @@ ALTER TABLE ONLY suppliers
 
 ALTER TABLE ONLY territories
     ADD CONSTRAINT pk_territories PRIMARY KEY ("TerritoryID");
+    
+    
+--
+-- Name: fk_products_supplier; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- 
+
+
+ALTER TABLE ONLY products
+    ADD CONSTRAINT fk_products_supplier FOREIGN KEY ("SupplierID") REFERENCES suppliers("SupplierID");
+
+
+--
+-- Name: fk_products_categories; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- 
+
+
+ALTER TABLE ONLY products
+    ADD CONSTRAINT fk_products_categories FOREIGN KEY ("CategoryID") REFERENCES categories("CategoryID");
 
 
 --
@@ -3858,4 +3876,3 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 --
 -- PostgreSQL database dump complete
 --
-
